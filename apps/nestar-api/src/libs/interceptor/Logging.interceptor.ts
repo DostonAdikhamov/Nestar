@@ -13,11 +13,12 @@ export class LoggingInterceptor implements NestInterceptor {
     
     if(requestType === "http") {
         // Develop if needed!
+        // return next.handle();
     } else if (requestType === "graphql") {
         /* (1) Print Request */
         const gqlContext = GqlExecutionContext.create(context);
         this.logger.log(`${this.stringify(gqlContext.getContext().req.body)}`, "REQUEST");
-
+        
         /* (2) Error handling via GraphQL */
         /* (3) No Errors, giving Response below */
         return next.handle().pipe(
@@ -27,6 +28,7 @@ export class LoggingInterceptor implements NestInterceptor {
         }),
       );
     }
+    return next.handle();
   }
 
   private stringify(context: ExecutionContext): string {

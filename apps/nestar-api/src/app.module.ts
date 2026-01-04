@@ -32,7 +32,7 @@ import { T } from './libs/types/common';
   ComponentsModule, 
   DatabaseModule
 ],
-  controllers: [AppController],
+  controllers: [AppController], 
   providers: [AppService, AppResolver],
 })
 export class AppModule {}

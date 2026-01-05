@@ -28,7 +28,7 @@ export class MemberService {
 
     public async login(input: LoginInput): Promise<Member> {
         const { memberNick, memberPassword } = input;
-        const response: Member = await this.memberModel
+        const response: Member | null = await this.memberModel
           .findOne({ memberNick: memberNick })
           .select("+memberPassword")
           .exec(); 
@@ -39,6 +39,9 @@ export class MemberService {
             throw new InternalServerErrorException(Message.BLOCKED_USER);
           }
 
+          if (typeof response.memberPassword !== 'string') {
+            throw new InternalServerErrorException('Member password is missing.');
+          }
           const isMatch = await this.authService.comparePasswords(input.memberPassword, response.memberPassword);
           if(!isMatch) throw new InternalServerErrorException(Message.WRONG_PASSWORD);
           response.accessToken = await this.authService.createToken(response);

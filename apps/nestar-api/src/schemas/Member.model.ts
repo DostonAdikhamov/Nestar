@@ -1,6 +1,5 @@
-import { Collection, Schema } from "mongoose";
-import { MemberAuthType, MemberStatus, MemberType } from "../libs/member.enum";
-
+import { Schema } from "mongoose";
+import { MemberAuthType, MemberStatus, MemberType } from "../libs/enums/member.enum";
 
 const MemberSchema = new Schema({
     memberType: {
@@ -39,7 +38,7 @@ const MemberSchema = new Schema({
         reqired: true
     },
 
-    memberFullName : {
+    memberFullName: {
         type: String,
     },
 

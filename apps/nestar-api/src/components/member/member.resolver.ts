@@ -55,7 +55,7 @@ export class MemberResolver {
         @AuthMember("_id") memberId: ObjectId
     ): Promise<Member> {
         console.log("Mutation: updateMember");
-        delete input._id;
+        // delete input._id;
         return await this.memberService.updateMember(memberId, input);
     }
 
@@ -92,7 +92,7 @@ export class MemberResolver {
     }
 
     /** UPLOADER **/
-    
+
 @UseGuards(AuthGuard)
 @Mutation((returns) => String)
 public async imageUploader(

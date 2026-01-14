@@ -197,7 +197,7 @@ export class PropertyService {
       const { propertyStatus, propertyLocationList } = input.search;
       const match: T = {};
       const sort: T = { [input?.sort ?? "createdAt"]: input?.direction ?? Direction.DESC}
-      
+
       if(propertyStatus) match.propertyStatus = propertyStatus;
       if(propertyLocationList) match.propertyLocation = { $in: propertyLocationList };
 
@@ -222,5 +222,33 @@ export class PropertyService {
       return result[0];
     }
 
+    public async updatePropertyByAdmin(input: PropertyUpdate): Promise<Property> {
+      let { propertyStatus, soldAt, deletedAt } = input;
+      const search: T = {
+        _id: input._id,
+        propertyStatus: PropertyStatus.ACTIVE
+      };
 
+      if (propertyStatus === PropertyStatus.SOLD) soldAt = moment().toDate();
+      else if (propertyStatus === PropertyStatus.DELETE) deletedAt = moment().toDate();
+
+      const result = await this.propertyModel
+      .findOneAndUpdate(search, input, {
+        new: true,
+      })
+      .exec()
+      if(!result) throw new InternalServerErrorException(Message.UPDATE_FAILED);
+
+      if(soldAt || deletedAt) {
+        await this.memberService.memberStatsEditor({
+          _id: result.memberId,
+          targetKey: "memberProperties",
+          modifier: -1
+        })
+      }
+
+      return result;
+    }
+
+    
 }

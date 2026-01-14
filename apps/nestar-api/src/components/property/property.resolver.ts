@@ -1,15 +1,21 @@
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { PropertyService } from './property.service';
 import { Properties, Property } from '../../libs/dto/property/property';
-import { AgentPropertiesInquiry, AllPropertiesInquiry, PropertiesInquiry, PropertyInput } from '../../libs/dto/property/property.input';
+import { 
+    AgentPropertiesInquiry, 
+    AllPropertiesInquiry, 
+    PropertiesInquiry, 
+    PropertyInput 
+} from '../../libs/dto/property/property.input';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { MemberType } from '../../libs/enums/member.enum';
 import { UseGuards } from '@nestjs/common';
-import { RolesGuard } from '../auth/guards/roles.guard';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { MemberType } from '../../libs/enums/member.enum';
 import { AuthMember } from '../auth/decorators/authMember.decorator';
-import type { ObjectId } from 'mongoose';
+import { ObjectId } from 'mongoose';
 import { WithoutGuard } from '../auth/guards/without.guard';
 import { shapeIntoMongoObjectId } from '../../libs/config';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { PropertyUpdate } from '../../libs/dto/property/property.update';
 
 @Resolver()
@@ -17,7 +23,7 @@ export class PropertyResolver {
      constructor(private readonly propertyService: PropertyService) {}
 
     @Roles(MemberType.AGENT)
-    @UseGuards(RolesGuard)
+    @UseGuards(AuthGuard)
     @Mutation(() => Property)
     public async createProperty(
         @Args('input') input: PropertyInput,
@@ -93,6 +99,17 @@ export class PropertyResolver {
         ): Promise<Property> {
         console.log("Mutation updatePropertyByAdmin");
         return await this.propertyService.updatePropertyByAdmin(input);
+    }
+
+    @Roles(MemberType.ADMIN)
+    @UseGuards(RolesGuard)
+    @Mutation((returns) => Property)
+    public async removePropertyByAdmin(
+        @Args('propertyId') input: string
+        ): Promise<Property> {
+        console.log("Mutation removePropertyByAdmin");
+        const propertyId = shapeIntoMongoObjectId(input)
+        return await this.propertyService.removePropertyByAdmin(propertyId);
     }
 }
 

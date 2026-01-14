@@ -3,12 +3,17 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { Properties, Property } from '../../libs/dto/property/property';
 import { Direction, Message } from '../../libs/enums/common.enum';
-import { AgentPropertiesInquiry, AllPropertiesInquiry, PropertiesInquiry, PropertyInput } from '../../libs/dto/property/property.input';
+import { 
+  AgentPropertiesInquiry, 
+  AllPropertiesInquiry, 
+  PropertiesInquiry, 
+  PropertyInput 
+} from '../../libs/dto/property/property.input';
 import { MemberService } from '../member/member.service';
-import { StatisticsModifier, T } from '../../libs/types/common';
-import { PropertyStatus } from '../../libs/enums/property.enum';
-import { ViewGroup } from '../../libs/enums/view.enum';
 import { ViewService } from '../view/view.service';
+import { PropertyStatus } from '../../libs/enums/property.enum';
+import { StatisticsModifier, T } from '../../libs/types/common';
+import { ViewGroup } from '../../libs/enums/view.enum';
 import { PropertyUpdate } from '../../libs/dto/property/property.update';
 import moment from 'moment';
 import { lookupMember, shapeIntoMongoObjectId } from '../../libs/config';
@@ -250,5 +255,12 @@ export class PropertyService {
       return result;
     }
 
-    
+    public async removePropertyByAdmin(propertyId: ObjectId): Promise<Property> {
+      const search: T = { _id: propertyId, propertyStatus: PropertyStatus.DELETE };
+      const result = await this.propertyModel.findOneAndDelete(search).exec();
+      if(!result) throw new InternalServerErrorException(Message.REMOVE_FAILED);
+      return result;
+    }
+
+
 }

@@ -115,6 +115,8 @@ export class BoardArticleService {
           return result[0];
         }
 
+        /** ADMIN **/
+
     public async getAllBoardArticlesByAdmin(input: AllBoardArticlesInquiry): Promise<BoardArticles> {
         const { articleCategory, articleStatus } = input.search;
         const match: T = {};

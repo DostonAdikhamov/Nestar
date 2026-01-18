@@ -93,7 +93,6 @@ export class MemberResolver {
     public async getAllMembersByAdmin(@Args("input") input: MembersInquiry): Promise<Members> {
         return await this.memberService.getAllMembersByAdmin(input);
     }
-    
 
     @Roles(MemberType.ADMIN)
     @UseGuards(RolesGuard)

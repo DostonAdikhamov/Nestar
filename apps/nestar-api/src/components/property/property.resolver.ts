@@ -58,7 +58,7 @@ export class PropertyResolver {
     }
 
     @UseGuards(WithoutGuard)
-    @Query((returns) => Property)
+    @Query((returns) => Properties)
     public async getProperties(
         @Args("input") input: PropertiesInquiry,
         @AuthMember("_id") memberId: ObjectId
